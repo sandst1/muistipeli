@@ -40,7 +40,11 @@ export default function Card({ data, state, onClicked }: CardProps) {
     <div
       className="w-full h-full p-2"
       style={{ backgroundColor: bgColor }}
-      onClick={() => onClicked(data)}
+      onClick={() => {
+        if (state !== CardState.Found) {
+          onClicked(data);
+        }
+      }}
     >
       <Image
         width={188}
