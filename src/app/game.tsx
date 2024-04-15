@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Card, { CardData, CardState } from "./card";
 import { getCards } from "./card-utils";
 
-const CARDS_VISIBLE_MS = 1500;
+const CARDS_VISIBLE_MS = 1000;
 
 type VisibleCard = CardData | null;
 type CardsMap = { [key: string]: CardState };
@@ -56,7 +56,7 @@ export default function Game({ gameOver, size }: GameProps) {
 
   const play = (audio: HTMLAudioElement | null) => {
     if (audio) {
-      setTimeout(() => audio.play(), 400);
+      setTimeout(() => audio.play(), 300);
     }
   };
 
