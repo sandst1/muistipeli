@@ -13,6 +13,7 @@ export type CardData = {
 };
 
 export type CardProps = {
+  cards: number;
   data: CardData;
   state: CardState;
   onClicked: (cardData: CardData) => void;
@@ -31,10 +32,13 @@ const bgColorFor = (state: CardState) => {
   }
 };
 
-export default function Card({ data, state, onClicked }: CardProps) {
+export default function Card({ cards, data, state, onClicked }: CardProps) {
   const img = state == CardState.Visible ? data.img : cover;
 
   const bgColor = bgColorFor(state);
+
+  const width = cards > 12 ? 135 : 188;
+  const height = width * 1.25;
 
   return (
     <div
@@ -47,8 +51,8 @@ export default function Card({ data, state, onClicked }: CardProps) {
       }}
     >
       <Image
-        width={188}
-        height={234}
+        width={width}
+        height={height}
         alt={data.img}
         src={`/${img}`}
         hidden={state === CardState.Found}

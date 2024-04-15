@@ -1,90 +1,52 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Card, { CardData, CardState } from "./card";
-import { getCards } from "./card-utils";
+import { useEffect, useRef, useState } from "react";
+import Game from "./game";
 
-const CARDS_VISIBLE_MS = 1500;
-
-const cards = getCards(12);
-const initialCardState = cards.reduce(
-  (cards: { [key: string]: CardState }, curCard) => {
-    cards[curCard.id] = CardState.Hidden;
-    return cards;
-  },
-  {}
-);
-
-type VisibleCard = CardData | null;
+const btnStyle =
+  "bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow";
 
 export default function Home() {
-  const [cardState, setCardState] = useState(initialCardState);
-  const [visibleCard, setVisibleCard] = useState<VisibleCard>(null);
-  const [resetting, setResetting] = useState(false);
+  const [gameOn, setGameOn] = useState<boolean>(false);
+  const [gameSize, setGameSize] = useState(0);
 
-  const successFxRef = useRef<HTMLAudioElement>(null);
-  const failFxRef = useRef<HTMLAudioElement>(null);
-
-  const play = (audio: HTMLAudioElement | null) => {
-    if (audio) {
-      setTimeout(() => audio.play(), 400);
+  useEffect(() => {
+    if (!gameOn && gameSize > 0) {
+      setGameOn(true);
     }
-  };
-
-  const handleClick = (cardData: CardData) => {
-    // If clicked already visible card, do nothing
-    if (visibleCard?.id === cardData.id || resetting) {
-      return;
-    }
-
-    if (visibleCard) {
-      setResetting(true);
-      let nextState = CardState.Hidden;
-      if (visibleCard.img === cardData.img) {
-        // we found a pair!
-        play(successFxRef.current);
-        nextState = CardState.Found;
-      } else {
-        play(failFxRef.current);
-      }
-
-      setTimeout(() => {
-        setVisibleCard(null);
-        setResetting(false);
-        setCardState({
-          ...cardState,
-          [visibleCard.id]: nextState,
-          [cardData.id]: nextState,
-        });
-      }, CARDS_VISIBLE_MS);
-    } else {
-      setVisibleCard(cardData);
-    }
-
-    setCardState({
-      ...cardState,
-      [cardData.id]: CardState.Visible,
-    });
-  };
+  }, [gameOn, gameSize]);
 
   return (
     <main className="flex h-dvh flex-col items-center justify-between p-6">
-      <div className="grid grid-cols-4 gap-4">
-        {cards.map((card: CardData) => (
-          <Card
-            key={card.id}
-            onClicked={(cardData) => handleClick(cardData)}
-            data={card}
-            state={cardState[card.id]}
-          />
-        ))}
-      </div>
-      <audio ref={successFxRef} controls className="hidden">
-        <source src="success.wav" type="audio/mp3" />
-      </audio>
-      <audio ref={failFxRef} controls className="hidden">
-        <source src="fail.wav" type="audio/mp3" />
-      </audio>
+      {gameOn ? (
+        <Game
+          gameOver={() => {
+            setGameSize(0);
+            setGameOn(false);
+          }}
+          size={gameSize}
+        />
+      ) : (
+        <div>
+          <div className="flex flex-row text-white justify-center w-full text-xl">
+            Valitse koko
+          </div>
+          <div className="flex flex-row gap-8 p-12">
+            <button className={btnStyle} onClick={() => setGameSize(4)}>
+              2x2
+            </button>
+            <button className={btnStyle} onClick={() => setGameSize(12)}>
+              4x3
+            </button>
+            <button className={btnStyle} onClick={() => setGameSize(16)}>
+              4x4
+            </button>
+            <button className={btnStyle} onClick={() => setGameSize(20)}>
+              5x4
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
