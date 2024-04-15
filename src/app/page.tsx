@@ -42,12 +42,10 @@ export default function Home() {
       let nextState = CardState.Hidden;
       if (visibleCard.img === cardData.img) {
         // we found a pair!
-        console.log("PARI!");
         play(successFxRef.current);
         nextState = CardState.Found;
       } else {
         play(failFxRef.current);
-        console.log("NO MATCH!");
       }
 
       setTimeout(() => {
