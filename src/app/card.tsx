@@ -48,6 +48,7 @@ export default function Card({ data, state, onClicked }: CardProps) {
         alt={data.img}
         src={`/${img}`}
         hidden={state === CardState.Found}
+        priority={true}
       />
     </div>
   );
